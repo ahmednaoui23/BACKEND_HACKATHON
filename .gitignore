@@ -1,0 +1,5 @@
+# crée un fichier .gitignore et colle ça dedans
+venv/
+__pycache__/
+*.pyc
+.env
