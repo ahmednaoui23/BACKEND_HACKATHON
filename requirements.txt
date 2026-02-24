@@ -3,3 +3,7 @@ Flask-CORS
 Flask-SQLAlchemy
 SQLAlchemy
 PyMySQL
+modelcontextprotocol
+httpx
+asyncio
+mcp
