@@ -103,3 +103,33 @@ def get_flop10_atelier(nom):
                "poste": e.poste, "score": _score_employe(e)} for e in employes]
     scores.sort(key=lambda x: x["score"])
     return {"atelier": nom, "flop10": scores[:10]}
+def get_adn_atelier(nom):
+    machines = Machine.query.filter_by(atelier=nom).all()
+    employes = Employee.query.filter_by(departement=nom).all()
+    machine_ids = [m.machine_id for m in machines]
+    logs = FactoryLog.query.filter(FactoryLog.machine_id.in_(machine_ids)).all()
+    total_logs = len(logs)
+
+    shift_stats = {}
+    for l in logs:
+        if l.task_status == "completed":
+            shift_stats[l.shift] = shift_stats.get(l.shift, 0) + 1
+
+    return {
+        "atelier": nom,
+        "nombre_employes": len(employes),
+        "nombre_machines": len(machines),
+        "machines_actives": sum(1 for m in machines if m.etat_machine == "actif"),
+        "machines_en_panne": sum(1 for m in machines if m.etat_machine == "en panne"),
+        "taux_completion": round(sum(1 for l in logs if l.task_status == "completed") / max(total_logs, 1) * 100, 2),
+        "taux_anomalies": round(sum(1 for l in logs if l.anomaly_flag == 1) / max(total_logs, 1) * 100, 2),
+        "production_par_shift": shift_stats,
+        "masse_salariale": sum(e.salaire_mensuel for e in employes),
+        "taux_absenteisme": round(sum(e.heures_absence_mois for e in employes) / max(len(employes), 1), 2)
+    }
+
+def comparer_ateliers(nom_a, nom_b):
+    return {
+        "atelier_a": get_rendement_atelier(nom_a),
+        "atelier_b": get_rendement_atelier(nom_b)
+    }

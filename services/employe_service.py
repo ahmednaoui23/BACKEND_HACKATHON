@@ -92,3 +92,104 @@ def get_historique_employe(employee_id):
         "evaluation_manager": e.evaluation_manager,
         "note": "Connecter à un historique mensuel pour courbe évolution"
     }
+def get_all_employes(departement=None, shift=None, poste=None):
+    query = Employee.query
+    if departement:
+        query = query.filter_by(departement=departement)
+    if shift:
+        query = query.filter_by(shift_travail=shift)
+    if poste:
+        query = query.filter_by(poste=poste)
+    employes = query.all()
+    return [
+        {
+            "employee_id": e.employee_id,
+            "nom": e.nom,
+            "prenom": e.prenom,
+            "sexe": e.sexe,
+            "age": e.age,
+            "poste": e.poste,
+            "departement": e.departement,
+            "type_contrat": e.type_contrat,
+            "anciennete_annees": e.anciennete_annees,
+            "salaire_mensuel": e.salaire_mensuel,
+            "shift_travail": e.shift_travail,
+            "statut_presence": e.statut_presence,
+            "performance_moyenne": e.performance_moyenne,
+            "taux_rendement": e.taux_rendement,
+            "risque_absenteisme": e.risque_absenteisme,
+            "risque_depart": e.risque_depart
+        }
+        for e in employes
+    ]
+
+def get_employe_by_id(employee_id):
+    e = Employee.query.filter_by(employee_id=employee_id).first()
+    if not e:
+        return {"error": "Employé non trouvé"}
+    return {
+        "employee_id": e.employee_id,
+        "nom": e.nom,
+        "prenom": e.prenom,
+        "sexe": e.sexe,
+        "date_naissance": e.date_naissance,
+        "age": e.age,
+        "etat_civil": e.etat_civil,
+        "nombre_enfants": e.nombre_enfants,
+        "niveau_etude": e.niveau_etude,
+        "poste": e.poste,
+        "departement": e.departement,
+        "type_contrat": e.type_contrat,
+        "anciennete_annees": e.anciennete_annees,
+        "salaire_mensuel": e.salaire_mensuel,
+        "prime_rendement": e.prime_rendement,
+        "heures_travail_semaine": e.heures_travail_semaine,
+        "heures_absence_mois": e.heures_absence_mois,
+        "retards_mois": e.retards_mois,
+        "jours_conge_restant": e.jours_conge_restant,
+        "statut_presence": e.statut_presence,
+        "shift_travail": e.shift_travail,
+        "performance_moyenne": e.performance_moyenne,
+        "taux_rendement": e.taux_rendement,
+        "accidents_travail": e.accidents_travail,
+        "maladies_professionnelles": e.maladies_professionnelles,
+        "evaluation_manager": e.evaluation_manager,
+        "risque_absenteisme": e.risque_absenteisme,
+        "risque_depart": e.risque_depart,
+        "date_embauche": e.date_embauche
+    }
+
+def create_employe(data):
+    try:
+        e = Employee(**data)
+        db.session.add(e)
+        db.session.commit()
+        return {"message": "Employé créé avec succès", "employee_id": e.employee_id}
+    except Exception as ex:
+        db.session.rollback()
+        return {"error": str(ex)}
+
+def update_employe(employee_id, data):
+    e = Employee.query.filter_by(employee_id=employee_id).first()
+    if not e:
+        return {"error": "Employé non trouvé"}
+    try:
+        for key, value in data.items():
+            setattr(e, key, value)
+        db.session.commit()
+        return {"message": "Employé mis à jour avec succès"}
+    except Exception as ex:
+        db.session.rollback()
+        return {"error": str(ex)}
+
+def delete_employe(employee_id):
+    e = Employee.query.filter_by(employee_id=employee_id).first()
+    if not e:
+        return {"error": "Employé non trouvé"}
+    try:
+        db.session.delete(e)
+        db.session.commit()
+        return {"message": "Employé supprimé avec succès"}
+    except Exception as ex:
+        db.session.rollback()
+        return {"error": str(ex)}

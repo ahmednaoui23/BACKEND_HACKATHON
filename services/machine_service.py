@@ -84,3 +84,84 @@ def get_rendement_machine(machine_id):
             "indice_impact_panne": indice_impact_panne
         }
     }
+def get_all_machines(atelier=None, etat=None):
+    query = Machine.query
+    if atelier:
+        query = query.filter_by(atelier=atelier)
+    if etat:
+        query = query.filter_by(etat_machine=etat)
+    machines = query.all()
+    return [
+        {
+            "machine_id": m.machine_id,
+            "nom_machine": m.nom_machine,
+            "type_machine": m.type_machine,
+            "atelier": m.atelier,
+            "marque": m.marque,
+            "etat_machine": m.etat_machine,
+            "annee_installation": m.annee_installation,
+            "capacite": m.capacite,
+            "pannes_mois": m.pannes_mois,
+            "rendement_machine": m.rendement_machine,
+            "consommation_energie": m.consommation_energie
+        }
+        for m in machines
+    ]
+
+def get_machine_by_id(machine_id):
+    m = Machine.query.filter_by(machine_id=machine_id).first()
+    if not m:
+        return {"error": "Machine non trouvée"}
+    return {
+        "machine_id": m.machine_id,
+        "nom_machine": m.nom_machine,
+        "type_machine": m.type_machine,
+        "atelier": m.atelier,
+        "tache": m.tache,
+        "unite_production": m.unite_production,
+        "capacite": m.capacite,
+        "temps_par_unite_min": m.temps_par_unite_min,
+        "temps_total_tache_min": m.temps_total_tache_min,
+        "operateurs_requis": m.operateurs_requis,
+        "pannes_mois": m.pannes_mois,
+        "etat_machine": m.etat_machine,
+        "annee_installation": m.annee_installation,
+        "marque": m.marque,
+        "consommation_energie": m.consommation_energie,
+        "rendement_machine": m.rendement_machine
+    }
+
+def create_machine(data):
+    try:
+        m = Machine(**data)
+        db.session.add(m)
+        db.session.commit()
+        return {"message": "Machine créée avec succès", "machine_id": m.machine_id}
+    except Exception as ex:
+        db.session.rollback()
+        return {"error": str(ex)}
+
+def update_machine(machine_id, data):
+    m = Machine.query.filter_by(machine_id=machine_id).first()
+    if not m:
+        return {"error": "Machine non trouvée"}
+    try:
+        for key, value in data.items():
+            setattr(m, key, value)
+        db.session.commit()
+        return {"message": "Machine mise à jour avec succès"}
+    except Exception as ex:
+        db.session.rollback()
+        return {"error": str(ex)}
+
+def delete_machine(machine_id):
+    m = Machine.query.filter_by(machine_id=machine_id).first()
+    if not m:
+        return {"error": "Machine non trouvée"}
+    try:
+        db.session.delete(m)
+        db.session.commit()
+        return {"message": "Machine supprimée avec succès"}
+    except Exception as ex:
+        db.session.rollback()
+        return {"error": str(ex)}

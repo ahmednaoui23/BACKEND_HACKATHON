@@ -1,6 +1,6 @@
 # 🏭 API Rendement Usine Textile
 
-API REST développée avec **Python Flask + SQLAlchemy + MySQL** pour calculer et visualiser le rendement complet d'une usine textile — employés, machines, ateliers et usine globale.
+API REST développée avec **Python Flask + SQLAlchemy + MySQL** pour gérer et visualiser le rendement complet d'une usine textile — employés, machines, ateliers et usine globale.
 
 ---
 
@@ -85,117 +85,111 @@ python app.py
 
 ---
 
-## 🔌 Endpoints API
+## 🔌 Endpoints API — 27 endpoints
 
-### 👷 Employé
+### 👷 Employés — CRUD
 | Méthode | URL | Description |
 |---|---|---|
-| GET | `/rendement/employe/{id}` | Fiche complète rendement employé |
-| GET | `/rendement/employe/{id}/historique` | Historique et évolution |
+| GET | `/employes` | Liste tous les employés |
+| GET | `/employes?departement=Coupe` | Filtrer par département |
+| GET | `/employes?shift=nuit` | Filtrer par shift |
+| GET | `/employes?poste=Opérateur` | Filtrer par poste |
+| GET | `/employes/{id}` | Profil complet employé |
+| POST | `/employes` | Créer un employé |
+| PUT | `/employes/{id}` | Modifier un employé |
+| DELETE | `/employes/{id}` | Supprimer un employé |
 
-### ⚙️ Machine
+### ⚙️ Machines — CRUD
 | Méthode | URL | Description |
 |---|---|---|
-| GET | `/rendement/machine/{id}` | Fiche complète rendement machine |
+| GET | `/machines` | Liste toutes les machines |
+| GET | `/machines?atelier=Coupe` | Filtrer par atelier |
+| GET | `/machines?etat=en panne` | Filtrer par état |
+| GET | `/machines/{id}` | Détail complet machine |
+| POST | `/machines` | Créer une machine |
+| PUT | `/machines/{id}` | Modifier une machine |
+| DELETE | `/machines/{id}` | Supprimer une machine |
 
-### 🏢 Atelier
+### 🏢 Ateliers
 | Méthode | URL | Description |
 |---|---|---|
-| GET | `/rendement/atelier/{nom}` | Rendement global de l'atelier |
-| GET | `/rendement/atelier/{nom}/top10` | Top 10 employés performers |
-| GET | `/rendement/atelier/{nom}/flop10` | Flop 10 employés à surveiller |
-
-### 📋 Tâches
-| Méthode | URL | Description |
-|---|---|---|
-| GET | `/rendement/taches` | Stats globales des tâches |
+| GET | `/ateliers` | Liste tous les ateliers |
+| GET | `/ateliers/{nom}/employes` | Employés d'un atelier |
+| GET | `/ateliers/{nom}/machines` | Machines d'un atelier |
+| GET | `/ateliers/{nom}/adn` | ADN complet atelier |
+| GET | `/ateliers/comparer?a=X&b=Y` | Comparer 2 ateliers |
 
 ### 🏭 Usine
 | Méthode | URL | Description |
 |---|---|---|
-| GET | `/rendement/usine` | Rendement global de l'usine |
+| GET | `/usine/pouls` | Snapshot temps réel usine |
+| GET | `/usine/risques` | Carte des risques |
+| GET | `/usine/rapport` | Rapport mensuel complet |
 
-### 🌍 Global
+### 📊 Rendement
 | Méthode | URL | Description |
 |---|---|---|
+| GET | `/rendement/employe/{id}` | Fiche rendement employé |
+| GET | `/rendement/employe/{id}/historique` | Historique et évolution |
+| GET | `/rendement/machine/{id}` | Fiche rendement machine |
+| GET | `/rendement/atelier/{nom}` | Rendement global atelier |
+| GET | `/rendement/atelier/{nom}/top10` | Top 10 performers |
+| GET | `/rendement/atelier/{nom}/flop10` | Flop 10 à surveiller |
+| GET | `/rendement/taches` | Stats globales tâches |
+| GET | `/rendement/usine` | Rendement global usine |
 | GET | `/rendement/global` | Tout en une seule réponse |
 
 ---
 
-## 📊 Indicateurs calculés
+## 📊 Indicateurs de rendement calculés (48 indicateurs)
 
-### Employé (12 indicateurs)
-**Normaux**
-- Taux de présence
-- Taux de ponctualité
-- Score rendement global
-- Nombre de tâches complétées
-- Taux d'anomalies générées
-- Classement dans l'atelier
-- Meilleur shift
+### Employé (12)
+**Normaux** — Taux de présence, Taux de ponctualité, Score rendement global, Tâches complétées, Taux d'anomalies, Classement atelier, Meilleur shift
 
-**Cachés**
-- Indice d'épuisement progressif
-- Indice burnout
-- Rendement résiduel après congé
-- Rendement nocturne ajusté
-- Évolution sur 6 mois
+**Cachés** — Indice d'épuisement, Indice burnout, Rendement après congé, Rendement nocturne ajusté, Évolution 6 mois
 
-### Machine (9 indicateurs)
-**Normaux**
-- Taux de disponibilité
-- Taux d'utilisation
-- OEE (Overall Equipment Effectiveness)
-- Classement dans l'atelier
-- Top 5 employés utilisateurs
+### Machine (9)
+**Normaux** — Taux de disponibilité, Taux d'utilisation, OEE, Classement atelier, Top 5 employés
 
-**Cachés**
-- Indice de dégradation
-- Rendement énergétique
-- Fréquence de cycle optimal
-- Indice d'impact panne
+**Cachés** — Indice de dégradation, Rendement énergétique, Fréquence cycle optimal, Indice impact panne
 
-### Atelier (10 indicateurs)
-**Normaux**
-- Rendement moyen atelier
-- Taux de complétion des tâches
-- Taux d'anomalies
-- Machines actives / en panne
-- Meilleur shift
-- Benchmark vs autres ateliers
+### Atelier (10)
+**Normaux** — Rendement moyen, Taux complétion, Taux anomalies, Machines actives/en panne, Meilleur shift, Benchmark
 
-**Cachés**
-- Équilibre de charge
-- Indice de chaleur productive
-- Vitesse de récupération après incident
-- Vitesse de montée en régime
+**Cachés** — Équilibre de charge, Indice chaleur productive, Vitesse récupération, Vitesse montée en régime
 
-### Tâches (9 indicateurs)
-**Normaux**
-- Taux de complétion global
-- Taux d'anomalies global
-- Efficacité temps réel
-- Rendement par produit textile
+### Tâches (9)
+**Normaux** — Taux complétion global, Taux anomalies, Efficacité temps réel, Rendement par produit
 
-**Cachés**
-- Taux de première réussite
-- Rendement par shift
-- Rendement par tranche horaire
-- Taux de répétition inutile
-- Débit horaire
+**Cachés** — Taux première réussite, Rendement par shift, Rendement par tranche horaire, Taux répétition inutile, Débit horaire
 
-### Usine (8 indicateurs)
-**Normaux**
-- Rendement global usine
-- Taux de gaspillage de capacité
-- Taux de complétion global
-- Meilleur atelier
-- Atelier le plus dégradé
-- Rendement par atelier
+### Usine (8)
+**Normaux** — Rendement global, Taux gaspillage, Taux complétion, Meilleur atelier, Atelier dégradé, Rendement par atelier
 
-**Cachés**
-- Rendement de résilience
-- Tendance sur 6 mois
+**Cachés** — Rendement résilience, Tendance 6 mois
+
+---
+
+## 🧪 Tester avec Postman
+
+**GET simple**
+```
+GET http://127.0.0.1:5000/employes
+GET http://127.0.0.1:5000/usine/pouls
+GET http://127.0.0.1:5000/rendement/usine
+```
+
+**POST / PUT — Body → raw → JSON**
+```json
+{
+  "employee_id": "E001",
+  "nom": "Ben Ali",
+  "prenom": "Ahmed",
+  "poste": "Opérateur",
+  "departement": "Coupe",
+  "shift_travail": "matin"
+}
+```
 
 ---
 
@@ -205,7 +199,7 @@ python app.py
 |---|---|
 | Python 3 | Langage principal |
 | Flask | Framework API REST |
-| Flask-CORS | Gestion CORS pour le frontend |
+| Flask-CORS | Gestion CORS frontend |
 | SQLAlchemy | ORM base de données |
 | Flask-SQLAlchemy | Intégration Flask + SQLAlchemy |
 | PyMySQL | Connecteur MySQL |
@@ -213,18 +207,8 @@ python app.py
 
 ---
 
-## 🧪 Tester avec Postman
-
-1. Ouvrir Postman
-2. Choisir méthode **GET**
-3. Taper l'URL ex: `http://127.0.0.1:5000/rendement/usine`
-4. Cliquer **Send**
-5. Le résultat JSON s'affiche
-
----
-
 ## 📝 Notes
 
-- Remplacer `{id}` par un vrai `employee_id` de la table ex: `E001`
+- Remplacer `{id}` par un vrai `employee_id` ex: `E001`
 - Remplacer `{nom}` par un vrai nom d'atelier ex: `Coupe`
 - Les endpoints `/rendement/taches` et `/rendement/global` peuvent être lents sur de grandes bases de données

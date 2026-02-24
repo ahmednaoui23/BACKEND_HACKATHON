@@ -61,3 +61,65 @@ def get_rendement_usine():
             "rendement_resilience": rendement_resilience
         }
     }
+def get_pouls_usine():
+    employes = Employee.query.all()
+    machines = Machine.query.all()
+    logs = FactoryLog.query.all()
+    total_logs = len(logs)
+
+    return {
+        "total_employes": len(employes),
+        "employes_presents": sum(1 for e in employes if e.statut_presence == "présent"),
+        "employes_absents": sum(1 for e in employes if e.statut_presence == "absent"),
+        "total_machines": len(machines),
+        "machines_actives": sum(1 for m in machines if m.etat_machine == "actif"),
+        "machines_en_panne": sum(1 for m in machines if m.etat_machine == "en panne"),
+        "taux_completion_jour": round(sum(1 for l in logs if l.task_status == "completed") / max(total_logs, 1) * 100, 2),
+        "taux_anomalies_jour": round(sum(1 for l in logs if l.anomaly_flag == 1) / max(total_logs, 1) * 100, 2)
+    }
+
+def get_carte_risques():
+    employes = Employee.query.all()
+    machines = Machine.query.all()
+
+    employes_risque = [
+        {"employee_id": e.employee_id, "nom": e.nom, "prenom": e.prenom,
+         "risque_depart": e.risque_depart, "risque_absenteisme": e.risque_absenteisme}
+        for e in employes if e.risque_depart == "élevé" or e.risque_absenteisme == "élevé"
+    ]
+    machines_risque = [
+        {"machine_id": m.machine_id, "nom_machine": m.nom_machine, "atelier": m.atelier,
+         "pannes_mois": m.pannes_mois, "etat_machine": m.etat_machine}
+        for m in machines if m.etat_machine == "en panne" or m.pannes_mois > 3
+    ]
+
+    return {
+        "employes_a_risque": employes_risque,
+        "machines_a_risque": machines_risque
+    }
+
+def get_rapport_mensuel():
+    employes = Employee.query.all()
+    machines = Machine.query.all()
+    logs = FactoryLog.query.all()
+    total_logs = len(logs)
+
+    produit_stats = {}
+    for l in logs:
+        if l.product not in produit_stats:
+            produit_stats[l.product] = 0
+        if l.task_status == "completed":
+            produit_stats[l.product] += 1
+
+    return {
+        "total_employes": len(employes),
+        "masse_salariale_totale": sum(e.salaire_mensuel for e in employes),
+        "total_machines": len(machines),
+        "machines_en_panne": sum(1 for m in machines if m.etat_machine == "en panne"),
+        "total_taches": total_logs,
+        "taches_completees": sum(1 for l in logs if l.task_status == "completed"),
+        "taux_completion": round(sum(1 for l in logs if l.task_status == "completed") / max(total_logs, 1) * 100, 2),
+        "taux_anomalies": round(sum(1 for l in logs if l.anomaly_flag == 1) / max(total_logs, 1) * 100, 2),
+        "production_par_produit": produit_stats,
+        "absenteisme_moyen": round(sum(e.heures_absence_mois for e in employes) / max(len(employes), 1), 2)
+    }
