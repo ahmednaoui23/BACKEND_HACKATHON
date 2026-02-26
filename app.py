@@ -8,17 +8,22 @@ from routes.atelier_routes import atelier_bp
 from routes.taches_routes import taches_bp
 from routes.usine_routes import usine_bp
 from routes.global_routes import global_bp
+
 app = Flask(__name__)
 app.config.from_object(Config)
-app.register_blueprint(global_bp)
+
 db.init_app(app)
-CORS(app)
+
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 app.register_blueprint(employe_bp)
 app.register_blueprint(machine_bp)
 app.register_blueprint(atelier_bp)
 app.register_blueprint(taches_bp)
 app.register_blueprint(usine_bp)
+app.register_blueprint(global_bp)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
+
+
