@@ -19,6 +19,6 @@ app.register_blueprint(machine_bp)
 app.register_blueprint(atelier_bp)
 app.register_blueprint(taches_bp)
 app.register_blueprint(usine_bp)
-
+#helmiiiiiiiisssssssssssssssssss
 if __name__ == "__main__":
     app.run(debug=True)
