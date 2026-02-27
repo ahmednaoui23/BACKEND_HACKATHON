@@ -9,6 +9,7 @@ from routes.taches_routes import taches_bp
 from routes.usine_routes import usine_bp
 from routes.global_routes import global_bp
 from routes.quality_routes import quality_bp
+from routes.dispatching_routes import dispatching_bp
 
 from scheduler.hr_scheduler import start_hr_scheduler, stop_hr_scheduler
 from scheduler.machine_scheduler import start_machine_scheduler, stop_machine_scheduler
@@ -28,6 +29,7 @@ app.register_blueprint(taches_bp)
 app.register_blueprint(usine_bp)
 app.register_blueprint(global_bp)
 app.register_blueprint(quality_bp)
+app.register_blueprint(dispatching_bp)
 
 if __name__ == "__main__":
     with app.app_context():

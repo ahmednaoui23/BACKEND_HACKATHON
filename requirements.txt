@@ -8,3 +8,6 @@ modelcontextprotocol
 httpx
 asyncio
 mcp
+mysql-connector-python
+numpy
+scipy
