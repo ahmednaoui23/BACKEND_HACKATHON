@@ -82,12 +82,12 @@ def _calculer_kpi_production(shift, atelier, today):
 
         # --- Taux Completion ---
         taux_completion = round(
-            sum(1 for l in logs_today if l.task_status == "completed") / total, 4
+            sum(1 for l in logs_today if l.task_status == "Completee") / total, 4
         )
 
         # --- Interruption Rate ---
         interruption_rate = round(
-            sum(1 for l in logs_today if l.task_status == "Interrupted") / total, 4
+            sum(1 for l in logs_today if l.task_status == "Interrompue") / total, 4
         )
 
         # --- Efficiency (durée réelle vs théorique) ---
@@ -114,7 +114,7 @@ def _calculer_kpi_production(shift, atelier, today):
 
         # --- OEE ---
         disponibilite = round(
-            sum(1 for m in machines if m.etat_machine == "Opérationnelle") / len(machines), 4
+            sum(1 for m in machines if m.etat_machine == "Actif") / len(machines), 4
         )
         qualite = round(
             sum(1 for l in logs_today if l.anomaly_flag == 0) / total, 4

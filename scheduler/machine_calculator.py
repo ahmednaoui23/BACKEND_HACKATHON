@@ -191,7 +191,7 @@ def _generer_alertes(kpi, machine, today):
         ))
 
     # Machine en panne
-    if machine.etat_machine != "Opérationnelle":
+    if machine.etat_machine != "Actif":
         alertes.append(MachineAlert(
             date       = today,
             machine_id = machine.machine_id,
