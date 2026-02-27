@@ -374,3 +374,88 @@ Courbes mises à jour en live
 - L'endpoint `/hr/kpis/today` retourne `vide` si le scheduler n'a pas encore tourné — attendre 1 minute
 - Les alertes avec `is_read=true` n'apparaissent plus dans les endpoints alerts
 - Le DPMO est calculé avec 5 opportunités par unité (modifiable dans `quality_calculator.py`)
+  ## 🗄️ Créer les tables KPI (SQL)
+
+Exécutez ce script dans MySQL Workbench pour créer les 6 tables KPI dédiées :
+```sql
+-- BLOC RH
+CREATE TABLE IF NOT EXISTS daily_hr_kpi (
+    id                     INT AUTO_INCREMENT PRIMARY KEY,
+    date                   DATE NOT NULL,
+    shift                  VARCHAR(50) NOT NULL,
+    present_count          INT,
+    absent_count           INT,
+    absenteeism_rate       DOUBLE,
+    avg_productivity       DOUBLE,
+    avg_rendement          DOUBLE,
+    fatigue_score          DOUBLE,
+    rotation_risk_count    INT,
+    absenteisme_risk_count INT,
+    avg_seniority          DOUBLE,
+    computed_at            DATETIME DEFAULT NOW(),
+    UNIQUE KEY uq_hr_date_shift (date, shift)
+);
+
+CREATE TABLE IF NOT EXISTS hr_alerts (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    date        DATE NOT NULL,
+    employee_id VARCHAR(100),
+    shift       VARCHAR(50),
+    alert_type  VARCHAR(100),
+    severity    VARCHAR(20),
+    message     TEXT,
+    is_read     BOOLEAN DEFAULT FALSE,
+    created_at  DATETIME DEFAULT NOW()
+);
+
+-- BLOC MACHINES
+CREATE TABLE IF NOT EXISTS daily_machine_kpi (
+    id               INT AUTO_INCREMENT PRIMARY KEY,
+    date             DATE NOT NULL,
+    machine_id       VARCHAR(100) NOT NULL,
+    mtbf             DOUBLE,
+    mttr             DOUBLE,
+    availability     DOUBLE,
+    utilization_rate DOUBLE,
+    anomaly_rate     DOUBLE,
+    cost_estimate    DOUBLE,
+    computed_at      DATETIME DEFAULT NOW(),
+    UNIQUE KEY uq_machine_date (date, machine_id)
+);
+
+CREATE TABLE IF NOT EXISTS machine_alerts (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    date        DATE NOT NULL,
+    machine_id  VARCHAR(100),
+    alert_type  VARCHAR(100),
+    severity    VARCHAR(20),
+    message     TEXT,
+    is_read     BOOLEAN DEFAULT FALSE,
+    created_at  DATETIME DEFAULT NOW()
+);
+
+-- BLOC QUALITÉ
+CREATE TABLE IF NOT EXISTS daily_quality_kpi (
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    date                DATE NOT NULL,
+    machine_id          VARCHAR(100),
+    anomaly_rate        DOUBLE,
+    first_pass_quality  DOUBLE,
+    rejection_rate      DOUBLE,
+    dpmo                DOUBLE,
+    stability           DOUBLE,
+    computed_at         DATETIME DEFAULT NOW(),
+    UNIQUE KEY uq_quality_date_machine (date, machine_id)
+);
+
+CREATE TABLE IF NOT EXISTS quality_alerts (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    date        DATE NOT NULL,
+    machine_id  VARCHAR(100),
+    alert_type  VARCHAR(100),
+    severity    VARCHAR(20),
+    message     TEXT,
+    is_read     BOOLEAN DEFAULT FALSE,
+    created_at  DATETIME DEFAULT NOW()
+);
+```
