@@ -50,7 +50,7 @@ def _calculer_kpi_shift(shift, today):
         total = len(employes)
 
         # --- Présence ---
-        present_count = sum(1 for e in employes if e.statut_presence == "Présent")
+        present_count = sum(1 for e in employes if e.statut_presence == "En_travail")
         absent_count  = total - present_count
         absenteeism_rate = round(absent_count / total, 4)
 

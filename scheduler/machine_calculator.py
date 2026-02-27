@@ -59,7 +59,7 @@ def _calculer_kpi_machine(machine, today):
 
         # --- Availability ---
         # etat_machine : 'Opérationnelle' = disponible
-        availability = 1.0 if machine.etat_machine == "Opérationnelle" else 0.0
+        availability = 1.0 if machine.etat_machine == "Actif" else 0.0
 
         # --- Utilization Rate ---
         # tâches actives aujourd'hui / capacité machine
