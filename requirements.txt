@@ -3,6 +3,7 @@ Flask-CORS
 Flask-SQLAlchemy
 SQLAlchemy
 PyMySQL
+APScheduler
 modelcontextprotocol
 httpx
 asyncio
